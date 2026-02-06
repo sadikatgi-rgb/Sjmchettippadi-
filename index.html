@@ -32,7 +32,7 @@
                     <option value="madrasa">Madrasa (Institution)</option>
                     <option value="range">Range Office</option>
                 </select>
-                <input type="email" id="userID" placeholder="User ID / Email">
+                <input type="email" id="userID" placeholder="Email ID">
                 <input type="password" id="password" placeholder="Password">
                 <button class="btn" onclick="app.login()">Sign In</button>
             </div>
@@ -40,12 +40,10 @@
 
         <div id="dash-sec" class="page">
             <div class="grid">
-                <div id="madrasaOnlyCards" style="display:contents;">
-                    <div class="card" onclick="app.showPage('teacher-add-sec')"><i class="fa fa-plus-circle"></i> Add Teacher</div>
-                    <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> New Admission</div>
-                </div>
-                <div class="card" onclick="app.showPage('committee-view-sec'); app.loadCommittee();"><i class="fa fa-users"></i> Committee</div>
-                <div class="card" onclick="app.showPage('teacher-view-sec'); app.loadTeachers();"><i class="fa fa-user-tie"></i> Teachers List</div>
+                <div class="card" onclick="app.showPage('teacher-add-sec')"><i class="fa fa-plus-circle"></i> Add/Edit Teacher</div>
+                <div class="card" onclick="app.showPage('committee-add-sec')"><i class="fa fa-user-shield"></i> Update Committee</div>
+                <div class="card" onclick="app.showPage('committee-view-sec'); app.loadCommittee();"><i class="fa fa-users"></i> Committee Folder</div>
+                <div class="card" onclick="app.showPage('teacher-view-sec'); app.loadTeachers();"><i class="fa fa-user-tie"></i> Staff List</div>
                 <div class="card" onclick="app.showPage('exam-stat-sec'); app.loadExamReport();"><i class="fa fa-chart-line"></i> Exam Stat</div>
                 <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-folder-open"></i> Departments</div>
             </div>
@@ -53,24 +51,32 @@
 
         <div id="teacher-add-sec" class="page">
             <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
-            <h3>അധ്യാപക വിവരം ചേർക്കുക</h3>
+            <h3>അധ്യാപക വിവരം</h3>
             <div class="admin-box">
+                <input type="hidden" id="editTeacherId">
                 <input type="text" id="tName" placeholder="പേര്">
-                <input type="text" id="tPlace" placeholder="നാട്">
                 <input type="text" id="tMadrasa" placeholder="മദ്റസ">
-                <input type="text" id="tJoinDate" placeholder="റൈഞ്ചിൽ ചേർന്ന തിയ്യതി">
                 <input type="number" id="tPhone" placeholder="മൊബൈൽ">
-                <button class="btn" onclick="app.saveTeacher()">Save</button>
+                <button class="btn" onclick="app.saveTeacher()" id="teacherBtn">Save Staff</button>
+            </div>
+        </div>
+
+        <div id="committee-add-sec" class="page">
+            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
+            <h3>ഭാരവാഹികളെ ചേർക്കുക / മാറ്റുക</h3>
+            <div class="admin-box">
+                <input type="hidden" id="editCommId">
+                <input type="text" id="commRole" placeholder="സ്ഥാനം (eg: President)">
+                <input type="text" id="commName" placeholder="പേര്">
+                <input type="number" id="commPhone" placeholder="ഫോൺ">
+                <button class="btn" onclick="app.saveCommittee()">Update Member</button>
             </div>
         </div>
 
         <div id="teacher-view-sec" class="page">
             <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
-            <div class="flex-row">
-                <h3>അധ്യാപക പട്ടിക</h3>
-                <button class="print-btn" onclick="window.print()">Print List</button>
-            </div>
-            <div id="teacherTableContainer"></div>
+            <h3>അധ്യാപക പട്ടിക</h3>
+            <div id="teacherTableContainer" class="table-responsive"></div>
         </div>
 
         <div id="committee-view-sec" class="page">
@@ -94,21 +100,8 @@
             </div>
         </div>
 
-        <div id="exam-stat-sec" class="page">
-            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
-            <h3>എക്സാം റിസൾട്ട് എൻട്രി</h3>
-            <div id="madrasaStatEntry" class="admin-box">
-                <select id="examClass"><option value="5">Class 5</option><option value="7">Class 7</option></select>
-                <div class="grid">
-                    <input type="number" id="bPassed" placeholder="Boys Passed">
-                    <input type="number" id="gPassed" placeholder="Girls Passed">
-                </div>
-                <button class="btn" onclick="app.saveExamStat()">Update</button>
-            </div>
-            <div id="examReportDisplay"></div>
-        </div>
-
     </div>
     <script type="module" src="script.js"></script>
 </body>
 </html>
+
