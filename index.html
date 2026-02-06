@@ -12,22 +12,25 @@
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" onclick="app.closeNav()">&times;</a>
         <div class="sidebar-header">Main Menu</div>
+        <hr>
         <a href="#" onclick="app.showPage('dash-sec')"><i class="fa fa-home"></i> Dashboard</a>
         <a href="#" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> New Admission</a>
         <a href="#" onclick="app.showPage('teacher-view-sec'); app.loadTeachers();"><i class="fa fa-user-tie"></i> Teachers Directory</a>
-        <a href="#" onclick="app.showPage('committee-view-sec'); app.loadCommittee();"><i class="fa fa-users"></i> Committee</a>
-        <a href="#" onclick="app.showPage('dept-sec')"><i class="fa fa-folder"></i> Departments</a>
+        <a href="#" onclick="app.showPage('committee-view-sec'); app.loadCommittee();"><i class="fa fa-users"></i> Committee Folder</a>
+        <a href="#" onclick="app.showPage('dept-sec')"><i class="fa fa-folder-open"></i> Departments</a>
+        <a href="#" onclick="app.logout()"><i class="fa fa-sign-out-alt"></i> Logout</a>
     </div>
 
     <div id="main">
         <nav id="navbar" style="display:none;">
-            <button class="openbtn" onclick="app.openNav()">&#9776;</button>
+            <button class="openbtn" onclick="app.openNav()">&#9776; Menu</button>
             <span id="displayUser">SJM CHETTIPPADI</span>
             <button class="logout-btn" onclick="app.logout()">Logout</button>
         </nav>
 
         <div id="login-sec" class="page active">
             <div class="login-box">
+                <i class="fa fa-mosque" style="font-size: 40px; color: #0056b3; margin-bottom: 10px;"></i>
                 <h2>SJM PORTAL</h2>
                 <select id="userRole">
                     <option value="madrasa">Madrasa (Institution)</option>
@@ -43,15 +46,17 @@
             <div class="grid">
                 <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> Admission</div>
                 <div class="card" onclick="app.showPage('teacher-add-sec')"><i class="fa fa-plus-circle"></i> Add Teacher</div>
-                <div id="rangeAdminCard" class="card" style="display:none;" onclick="app.showPage('committee-add-sec')"><i class="fa fa-user-shield"></i> Update Committee</div>
-                <div class="card" onclick="app.showPage('committee-view-sec'); app.loadCommittee();"><i class="fa fa-users"></i> Committee Folder</div>
-                <div class="card" onclick="app.showPage('teacher-view-sec'); app.loadTeachers();"><i class="fa fa-user-tie"></i> Teachers List</div>
+                <div id="rangeAdminCard" class="card" style="display:none;" onclick="app.showPage('committee-add-sec')">
+                    <i class="fa fa-user-shield"></i> Update Committee
+                </div>
+                <div class="card" onclick="app.showPage('committee-view-sec'); app.loadCommittee();"><i class="fa fa-users"></i> Committee</div>
+                <div class="card" onclick="app.showPage('teacher-view-sec'); app.loadTeachers();"><i class="fa fa-user-tie"></i> Staff List</div>
                 <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-folder-open"></i> Departments</div>
             </div>
         </div>
 
         <div id="admission-sec" class="page">
-            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
+            <button class="btn back-btn" onclick="app.showPage('dash-sec')"><i class="fa fa-arrow-left"></i> Back</button>
             <h3>New Admission</h3>
             <div class="admin-box">
                 <input type="text" id="sName" placeholder="കുട്ടിയുടെ പേര്">
@@ -87,6 +92,17 @@
             </div>
         </div>
 
+        <div id="committee-add-sec" class="page">
+            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
+            <h3>Update Committee</h3>
+            <div class="admin-box">
+                <input type="text" id="commRole" placeholder="സ്ഥാനം">
+                <input type="text" id="commName" placeholder="പേര്">
+                <input type="number" id="commPhone" placeholder="ഫോൺ">
+                <button class="btn" onclick="app.saveCommittee()">Update</button>
+            </div>
+        </div>
+
         <div id="teacher-view-sec" class="page">
             <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
             <div id="teacherTableContainer"></div>
@@ -95,17 +111,6 @@
         <div id="committee-view-sec" class="page">
             <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
             <div id="committeeFolderList"></div>
-        </div>
-
-        <div id="committee-add-sec" class="page">
-            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
-            <h3>Update Committee (Range Only)</h3>
-            <div class="admin-box">
-                <input type="text" id="commRole" placeholder="സ്ഥാനം">
-                <input type="text" id="commName" placeholder="പേര്">
-                <input type="number" id="commPhone" placeholder="ഫോൺ">
-                <button class="btn" onclick="app.saveCommittee()">Update</button>
-            </div>
         </div>
 
     </div>
