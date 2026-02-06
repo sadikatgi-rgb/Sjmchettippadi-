@@ -36,12 +36,46 @@
         <div class="content">
             <h3>New Student Registration</h3>
             <input type="text" id="stdName" placeholder="Student Name">
+            
+            <label>ലിംഗം:</label>
             <select id="stdGender">
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
             </select>
-            <input type="number" id="stdClass" placeholder="Class">
-            <input type="text" id="stdDiv" placeholder="Division">
+
+            <label>ക്ലാസ്:</label>
+            <select id="stdClass" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
+                <option value="">തിരഞ്ഞെടുക്കുക</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </select>
+
+            <label>ഡിവിഷൻ:</label>
+            <select id="stdDiv" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
+                <option value="">തിരഞ്ഞെടുക്കുക</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
+                <option value="J">J</option>
+                <option value="K">K</option>
+            </select>
+
             <button class="btn save-btn" onclick="app.saveStudent()">Save Student</button>
         </div>
     </div>
@@ -69,9 +103,40 @@
         <div class="modal-content">
             <h3>Edit Details</h3>
             <input type="hidden" id="editId">
+            <label>പേര്:</label>
             <input type="text" id="editName">
-            <input type="number" id="editClass">
-            <input type="text" id="editDiv">
+            
+            <label>ക്ലാസ്:</label>
+            <select id="editClass" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </select>
+
+            <label>ഡിവിഷൻ:</label>
+            <select id="editDiv" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
+                <option value="J">J</option>
+                <option value="K">K</option>
+            </select>
+
             <div class="modal-btns">
                 <button class="btn" onclick="app.updateStudent()">Update</button>
                 <button class="btn cancel-btn" onclick="document.getElementById('editModal').style.display='none'">Cancel</button>
@@ -82,4 +147,3 @@
     <script type="module" src="script.js"></script>
 </body>
 </html>
-
