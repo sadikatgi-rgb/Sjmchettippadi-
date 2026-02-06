@@ -3,7 +3,7 @@ import { getFirestore, collection, addDoc, getDocs, getDoc, updateDoc, doc, dele
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAvwbUdQ7TfFOsgGln4HQBdMdYo-KYHUDY",
+    apiKey: "AIzaSyBxN_4Nqp0D635KRwHIQXmsLk_QRit8mBM",
     authDomain: "sjmchettippadi.firebaseapp.com",
     projectId: "sjmchettippadi",
     appId: "1:832325821137:web:415b7e26cabd77ec8d5bf0"
