@@ -1,34 +1,45 @@
-:root { --primary: #0056b3; --dark: #2c3e50; --light: #f4f7f6; }
-body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--light); }
-.page { display: none; padding: 20px; animation: fadeIn 0.3s; }
-.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+:root { 
+    --primary: #0056b3; 
+    --dark: #2c3e50; 
+    --light: #f4f7f6; 
+}
+
+body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--light); overflow-x: hidden; }
 
 /* Sidebar */
-.sidebar { height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: var(--dark); overflow-x: hidden; transition: 0.5s; padding-top: 60px; color: white; }
-.sidebar a { padding: 10px 20px; text-decoration: none; font-size: 18px; color: #abb2b9; display: block; }
+.sidebar {
+    height: 100%; width: 0; position: fixed; z-index: 1001; top: 0; left: 0;
+    background-color: var(--dark); overflow-x: hidden; transition: 0.3s; padding-top: 60px;
+}
+.sidebar a {
+    padding: 12px 20px; text-decoration: none; font-size: 18px; color: #abb2b9;
+    display: block; transition: 0.2s;
+}
 .sidebar a:hover { color: white; background: #34495e; }
-.sidebar .closebtn { position: absolute; top: 0; right: 25px; font-size: 36px; }
-.sidebar-header { padding: 15px 20px; font-weight: bold; font-size: 20px; color: #3498db; }
-.committee-info { padding: 10px 20px; font-size: 13px; line-height: 1.6; }
+.sidebar .closebtn { position: absolute; top: 10px; right: 25px; font-size: 36px; color: white; cursor: pointer; }
+.sidebar-header { padding: 15px 20px; font-weight: bold; font-size: 18px; color: #3498db; }
+.committee-info { padding: 10px 20px; color: white; font-size: 13px; line-height: 1.5; }
 
-/* UI Elements */
-nav { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-.openbtn { font-size: 20px; cursor: pointer; background: none; border: none; color: white; }
-.login-box { background: white; max-width: 350px; margin: 80px auto; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+/* Pages & Grid */
+.page { display: none; padding: 20px; }
+.active { display: block; }
+nav { background: var(--primary); color: white; padding: 10px 15px; display: none; justify-content: space-between; align-items: center; }
+.openbtn { font-size: 24px; cursor: pointer; background: none; border: none; color: white; }
+
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.card { background: white; padding: 30px 10px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; transition: 0.3s; }
-.card i { font-size: 30px; color: var(--primary); margin-bottom: 10px; display: block; }
-.card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+.card { background: white; padding: 25px 10px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; }
+.card i { font-size: 30px; color: var(--primary); display: block; margin-bottom: 10px; }
 
-/* Table & Inputs */
-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; margin-top: 15px; }
-th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-th { background: var(--primary); color: white; }
-input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-.btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-.print-btn { background: #27ae60; margin: 10px 0; }
+/* Login Box */
+.login-box { 
+    background: white; max-width: 320px; margin: 80px auto; padding: 30px; 
+    border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; 
+}
 
-/* Dept Grid */
+/* Common UI */
+input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+.btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; }
+.admin-box { background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #eee; }
+
 .dept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .dept-card { background: #3498db; color: white; padding: 20px; text-align: center; border-radius: 10px; cursor: pointer; font-weight: bold; }
