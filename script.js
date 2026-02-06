@@ -52,26 +52,24 @@ const app = {
                 alert("യൂസർ വിവരങ്ങൾ ഡാറ്റാബേസിൽ (users collection) നൽകിയിട്ടില്ല!");
             }
         } catch (error) {
-            console.error("Login Error:", error.code);
-            alert("Login Failed: ഐഡിയോ പാസ്‌വേഡോ തെറ്റാണ്!");
+            console.error("Login Error Detailed:", error); 
+            // ലോഗിൻ പരാജയപ്പെടാനുള്ള കൃത്യമായ കാരണം കാണിക്കുന്നു
+            if (error.code === 'auth/invalid-credential') {
+                alert("Login Failed: ഐഡിയോ പാസ്‌വേഡോ തെറ്റാണ്!");
+            } else {
+                alert("Login Failed: " + error.message);
+            }
         }
     },
-    
 
     showPage: (id) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         const targetPage = document.getElementById(id);
         if(targetPage) targetPage.classList.add('active');
     },
-// script.js-ലെ ലോഗിൻ ഫങ്ക്ഷന്റെ അവസാനം ഇങ്ങനെ മാറ്റുക:
-} catch (error) {
-    console.error("Login Error Detailed:", error); // കൺസോളിൽ കൂടുതൽ വിവരങ്ങൾ കാണാൻ
-    alert("Login Failed: " + error.message); // എറർ മെസ്സേജ് പോപ്പ്-അപ്പായി കാണാൻ
-}
 
     saveStudent: async () => {
         const name = document.getElementById('stdName').value;
-        // പുതിയDropdown-ൽ നിന്നുള്ള വാല്യൂ എടുക്കുന്നു
         const stdClass = document.getElementById('stdClass').value;
         const stdDiv = document.getElementById('stdDiv').value;
 
