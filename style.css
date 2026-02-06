@@ -1,0 +1,30 @@
+body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; min-height: 100vh; }
+.page { display: none; padding: 15px; }
+.active { display: block; }
+nav { background: #0056b3; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 10px 10px; }
+
+/* Login */
+.login-box { background: #333; color: white; width: 280px; margin: 50px auto; padding: 25px; border-radius: 20px; text-align: center; }
+input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+
+/* Grid Cards */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+.card { background: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: bold; cursor: pointer; }
+
+/* Table */
+table { width: 100%; background: white; border-collapse: collapse; margin-top: 15px; border-radius: 10px; overflow: hidden; font-size: 14px; }
+th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+th { background: #0056b3; color: white; }
+
+/* Buttons */
+.btn { background: #5c67f2; color: white; border: none; padding: 12px; cursor: pointer; border-radius: 25px; font-weight: bold; margin-top: 5px; }
+.print-btn { background: #28a745; width: auto; margin-bottom: 10px; }
+
+/* Modal */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); }
+.modal-content { background: white; width: 90%; max-width: 320px; margin: 20% auto; padding: 20px; border-radius: 15px; }
+.cancel-btn { background: #666; }
+
+.status-draft { color: orange; }
+.status-verified { color: green; font-weight: bold; }
+

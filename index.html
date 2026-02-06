@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madrasa Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="login-sec" class="page active">
+        <div class="login-box">
+            <h2>SAMASTHA PORTAL</h2>
+            <select id="userRole">
+                <option value="madrasa">Madrasa (Institution)</option>
+                <option value="range">Range Secretary</option>
+            </select>
+            <input type="email" id="userID" placeholder="Email Address">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn" onclick="app.login()">Sign In</button>
+        </div>
+    </div>
+
+    <div id="dash-sec" class="page">
+        <nav>
+            <span id="displayUser"></span>
+            <button class="logout-btn" onclick="app.logout()">Logout</button>
+        </nav>
+        <div class="grid">
+            <div class="card" onclick="app.showPage('admission-sec')">Admission Form</div>
+            <div class="card" onclick="app.showPage('view-sec'); app.loadStudents();">Student Database</div>
+        </div>
+    </div>
+
+    <div id="admission-sec" class="page">
+        <button onclick="app.showPage('dash-sec')">Back</button>
+        <div class="content">
+            <h3>New Student Registration</h3>
+            <input type="text" id="stdName" placeholder="Student Name">
+            <select id="stdGender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+            <input type="number" id="stdClass" placeholder="Class">
+            <input type="text" id="stdDiv" placeholder="Division">
+            <button class="btn save-btn" onclick="app.saveStudent()">Save Student</button>
+        </div>
+    </div>
+
+    <div id="view-sec" class="page">
+        <button onclick="app.showPage('dash-sec')">Back</button>
+        <div class="content">
+            <h3>Student Records</h3>
+            <button class="btn print-btn" onclick="app.printVerified()">Print Verified List</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="studentList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Details</h3>
+            <input type="hidden" id="editId">
+            <input type="text" id="editName">
+            <input type="number" id="editClass">
+            <input type="text" id="editDiv">
+            <div class="modal-btns">
+                <button class="btn" onclick="app.updateStudent()">Update</button>
+                <button class="btn cancel-btn" onclick="document.getElementById('editModal').style.display='none'">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
+
