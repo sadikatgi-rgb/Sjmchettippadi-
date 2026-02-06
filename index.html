@@ -10,7 +10,7 @@
 <body>
 
     <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="javascript:void(0)" class="closebtn" onclick="app.closeNav()">&times;</a>
         <div class="sidebar-header">ഭാരവാഹികൾ</div>
         <div id="sidebarCommitteeList" class="committee-info">
             </div>
@@ -25,7 +25,7 @@
 
     <div id="main">
         <nav id="navbar" style="display:none;">
-            <button class="openbtn" onclick="openNav()">&#9776;</button>
+            <button class="openbtn" onclick="app.openNav()">&#9776;</button>
             <span id="displayUser"></span>
             <button class="logout-btn" onclick="app.logout()">Logout</button>
         </nav>
@@ -48,12 +48,12 @@
                 <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> Admission</div>
                 <div class="card" onclick="app.showPage('view-sec'); app.loadStudents();"><i class="fa fa-database"></i> Database</div>
                 <div class="card" onclick="app.showPage('exam-stat-sec')"><i class="fa fa-chart-line"></i> Exam Stat</div>
-                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-bullhorn"></i> Circulars</div>
+                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-bullhorn"></i> Announcements</div>
             </div>
         </div>
 
         <div id="manage-committee-sec" class="page">
-            <h3>ഭാരവാഹികളെ നിയന്ത്രിക്കുക</h3>
+            <h3>ഭാരവാഹികളെ മാറ്റുക</h3>
             <div class="admin-box">
                 <input type="text" id="commRole" placeholder="സ്ഥാനം (eg: President)">
                 <input type="text" id="commName" placeholder="പേര്">
@@ -63,53 +63,8 @@
             <div id="committeeTable"></div>
         </div>
 
-        <div id="teacher-sec" class="page">
-            <h3>അധ്യാപക വിവരങ്ങൾ</h3>
-            <div class="admin-box">
-                <input type="text" id="tName" placeholder="പേര്">
-                <input type="text" id="tPlace" placeholder="നാട്">
-                <input type="text" id="tDate" placeholder="റൈഞ്ചിൽ ചേർന്ന തിയ്യതി">
-                <input type="number" id="tPhone" placeholder="മൊബൈൽ">
-                <button class="btn" onclick="app.saveTeacher()">Save</button>
-            </div>
-            <button class="btn print-btn" onclick="window.print()">Print List</button>
-            <div id="teacherList"></div>
         </div>
-
-        <div id="dept-sec" class="page">
-            <h3>വകുപ്പുകൾ & അറിയിപ്പുകൾ</h3>
-            <div class="dept-grid">
-                <div class="dept-card" onclick="app.loadDocs('IT')">IT</div>
-                <div class="dept-card" onclick="app.loadDocs('Exam')">EXAM & WELFARE</div>
-                <div class="dept-card" onclick="app.loadDocs('Missionary')">MISSIONARY</div>
-                <div class="dept-card" onclick="app.loadDocs('Magazine')">MAGAZINE</div>
-            </div>
-            <div id="docList" class="content"></div>
-        </div>
-        
-        <div id="admission-sec" class="page">
-            <button class="btn" onclick="app.showPage('dash-sec')">Back</button>
-            <h3>പുതിയ അഡ്മിഷൻ</h3>
-            <input type="text" id="stdName" placeholder="Student Name">
-            <select id="stdGender"><option value="Male">ആൺ</option><option value="Female">പെൺ</option></select>
-            <input type="number" id="stdClass" placeholder="Class">
-            <input type="text" id="stdDiv" placeholder="Division">
-            <button class="btn save-btn" onclick="app.saveStudent()">Save</button>
-        </div>
-
-        <div id="view-sec" class="page">
-            <button class="btn" onclick="app.showPage('dash-sec')">Back</button>
-            <table id="stdTable">
-                <thead><tr><th>Name</th><th>Class</th><th>Status</th><th>Action</th></tr></thead>
-                <tbody id="studentList"></tbody>
-            </table>
-        </div>
-    </div>
 
     <script type="module" src="script.js"></script>
-    <script>
-        function openNav() { document.getElementById("mySidebar").style.width = "250px"; }
-        function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
-    </script>
 </body>
 </html>
