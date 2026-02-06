@@ -1,9 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, getDoc, updateDoc, doc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, updateDoc, doc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBxN_4Nqp0D635KRwHIQXmsLk_QRit8mBM",
+    apiKey: "AIzaSyBxN_4Nqp0D635KRwHIQXmsLk_QRit8mBM", // നിങ്ങളുടെ ശരിയായ API Key നൽകുക
     authDomain: "sjmchettippadi.firebaseapp.com",
     projectId: "sjmchettippadi",
     appId: "1:832325821137:web:415b7e26cabd77ec8d5bf0"
@@ -14,105 +14,92 @@ const db = getFirestore(fbApp);
 const auth = getAuth(fbApp);
 
 const app = {
-    // ലോഗിൻ ഫങ്ക്ഷൻ
     login: async () => {
         const id = document.getElementById('userID').value.trim();
         const pass = document.getElementById('password').value;
         const selectedRole = document.getElementById('userRole').value;
-
-        if(!id || !pass) return alert("Please enter ID and Password");
-
         const email = id.includes('@') ? id : `${id}@madrasa.com`;
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, pass);
             const uid = userCredential.user.uid;
-
-            // Firestore-ൽ നിന്ന് റോൾ പരിശോധിക്കുന്നു
             const userDoc = await getDoc(doc(db, "users", uid));
             
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
-                if (userData.role === selectedRole) {
-                    localStorage.setItem('role', userData.role);
-                    app.showPage('dash-sec');
-                    document.getElementById('displayUser').innerText = `Welcome: ${id}`;
-                } else {
-                    await signOut(auth);
-                    alert("തിരഞ്ഞെടുത്ത Role തെറ്റാണ്!");
-                }
+            if (userDoc.exists() && userDoc.data().role === selectedRole) {
+                localStorage.setItem('role', selectedRole);
+                document.getElementById('navbar').style.display = 'flex';
+                if(selectedRole === 'range') document.getElementById('rangeOnlyLinks').style.display = 'block';
+                app.showPage('dash-sec');
+                app.loadCommitteeSidebar();
             } else {
                 await signOut(auth);
-                alert("ഈ യൂസറെ ഡാറ്റാബേസിൽ കണ്ടെത്തിയില്ല!");
+                alert("Role Mismatch!");
             }
-        } catch (error) {
-            alert("Login Failed: " + error.message);
-        }
+        } catch (e) { alert("Error: " + e.message); }
     },
 
     showPage: (id) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        closeNav();
     },
 
-    saveStudent: async () => {
-        const name = document.getElementById('stdName').value;
-        const stdClass = document.getElementById('stdClass').value;
-        const uid = auth.currentUser.uid;
-
-        try {
-            await addDoc(collection(db, "students"), {
-                name,
-                class: stdClass,
-                div: document.getElementById('stdDiv').value,
-                madrasa_id: uid,
-                status: "pending",
-                createdAt: new Date()
-            });
-            alert("സേവ് ചെയ്തു!");
-            app.showPage('dash-sec');
-        } catch (e) { alert("Error: " + e.message); }
+    // ഭാരവാഹികൾ (Committee)
+    addCommittee: async () => {
+        const data = {
+            role: document.getElementById('commRole').value,
+            name: document.getElementById('commName').value,
+            phone: document.getElementById('commPhone').value,
+            order: Date.now()
+        };
+        await addDoc(collection(db, "committee"), data);
+        alert("Added!");
+        app.loadCommitteeManage();
     },
 
-    loadStudents: async () => {
-        const list = document.getElementById('studentList');
-        list.innerHTML = "Loading...";
-        
-        const role = localStorage.getItem('role');
-        let q = collection(db, "students");
-        
-        if(role === 'madrasa') {
-            q = query(q, where("madrasa_id", "==", auth.currentUser.uid));
+    loadCommitteeSidebar: async () => {
+        const snap = await getDocs(query(collection(db, "committee"), orderBy("order")));
+        let html = "";
+        snap.forEach(d => {
+            const m = d.data();
+            html += `<p><b>${m.role}:</b><br>${m.name}<br>${m.phone}</p>`;
+        });
+        document.getElementById('sidebarCommitteeList').innerHTML = html;
+    },
+
+    loadCommitteeManage: async () => {
+        const snap = await getDocs(query(collection(db, "committee"), orderBy("order")));
+        let html = "<table><tr><th>Designation</th><th>Name</th><th>Action</th></tr>";
+        snap.forEach(d => {
+            const m = d.data();
+            html += `<tr><td>${m.role}</td><td>${m.name}</td><td><button onclick="app.deleteMember('${d.id}')">❌</button></td></tr>`;
+        });
+        document.getElementById('committeeTable').innerHTML = html + "</table>";
+    },
+
+    deleteMember: async (id) => {
+        if(confirm("Delete this member?")) {
+            await deleteDoc(doc(db, "committee", id));
+            app.loadCommitteeManage();
         }
-
-        const snap = await getDocs(q);
-        list.innerHTML = "";
-        snap.forEach(sDoc => {
-            const d = sDoc.data();
-            list.innerHTML += `
-                <tr>
-                    <td>${d.name}</td>
-                    <td>${d.class}</td>
-                    <td>${d.status}</td>
-                    <td>
-                        ${role === 'range' ? `<button onclick="app.verify('${sDoc.id}')">Verify</button>` : '---'}
-                    </td>
-                </tr>`;
-        });
     },
 
-    verify: async (id) => {
-        await updateDoc(doc(db, "students", id), { status: 'verified' });
-        app.loadStudents();
+    // അധ്യാപകർ
+    saveTeacher: async () => {
+        const data = {
+            name: document.getElementById('tName').value,
+            place: document.getElementById('tPlace').value,
+            date: document.getElementById('tDate').value,
+            phone: document.getElementById('tPhone').value,
+            madrasa_id: auth.currentUser.uid
+        };
+        await addDoc(collection(db, "teachers"), data);
+        alert("Teacher Saved!");
     },
 
-    logout: () => {
-        signOut(auth).then(() => {
-            localStorage.clear();
-            location.reload();
-        });
-    }
+    // ... മറ്റ് ഫങ്ക്ഷനുകൾ (Student save, load etc.) ...
+    
+    logout: () => { signOut(auth).then(() => location.reload()); }
 };
 
-// ആപ്പിലെ ബട്ടണുകൾക്ക് ഫങ്ക്ഷൻ കിട്ടാൻ വേണ്ടി
 window.app = app;
