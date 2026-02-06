@@ -5,7 +5,7 @@ import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstati
 // Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyAvwbUdQ7TfFOsgGln4HQBdMdYo-KYHUDY",
-    authDomain: "sjmchettippadi.firebaseapp.com", // ഇത് ലോഗിൻ ചെയ്യാൻ അത്യാവശ്യമാണ്
+    authDomain: "sjmchettippadi.firebaseapp.com",
     projectId: "sjmchettippadi",
     appId: "1:832325821137:web:415b7e26cabd77ec8d5bf0"
 };
@@ -15,34 +15,49 @@ const db = getFirestore(fbApp);
 const auth = getAuth(fbApp);
 
 const app = {
+    // പരിഷ്കരിച്ച ലോഗിൻ ഫങ്ക്ഷൻ
     login: async () => {
         const id = document.getElementById('userID').value; 
         const pass = document.getElementById('password').value;
-        const role = document.getElementById('userRole').value;
+        const selectedRole = document.getElementById('userRole').value; 
 
         if(!id || !pass) return alert("ദയവായി ID-യും പാസ്‌വേഡും നൽകുക");
 
-        // യൂസർ ഐഡി ട്രിം ചെയ്യുന്നു (സ്പേസ് ഒഴിവാക്കാൻ)
         const cleanID = id.toLowerCase().trim();
         const email = cleanID.includes('@') ? cleanID : `${cleanID}@madrasa.com`; 
 
         try {
+            // 1. ഫയർബേസ് ഓതന്റിക്കേഷൻ
             const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-            localStorage.setItem('uid', userCredential.user.uid);
-            localStorage.setItem('role', role);
-            localStorage.setItem('email', email);
+            const uid = userCredential.user.uid;
+
+            // 2. 'users' കളക്ഷനിൽ നിന്ന് ഈ യൂസറുടെ യഥാർത്ഥ റോൾ പരിശോധിക്കുന്നു
+            const userDoc = await getDoc(doc(db, "users", uid));
             
-            alert("Login Success!");
-            document.getElementById('displayUser').innerText = role.toUpperCase() + ": " + cleanID;
-            app.showPage('dash-sec');
-            app.loadStudents(); // ലോഗിൻ ആകുമ്പോൾ ലിസ്റ്റ് ലോഡ് ചെയ്യാൻ
+            if (userDoc.exists()) {
+                const actualRole = userDoc.data().role;
+
+                // 3. യൂസർ തിരഞ്ഞെടുത്ത റോളും ഡാറ്റാബേസിലെ റോളും ഒന്നാണോ എന്ന് നോക്കുന്നു
+                if (actualRole === selectedRole) {
+                    localStorage.setItem('uid', uid);
+                    localStorage.setItem('role', actualRole);
+                    localStorage.setItem('email', email);
+                    
+                    alert("Login Success!");
+                    document.getElementById('displayUser').innerText = actualRole.toUpperCase() + ": " + cleanID;
+                    app.showPage('dash-sec');
+                    app.loadStudents();
+                } else {
+                    await signOut(auth);
+                    alert("Error: നിങ്ങൾ തിരഞ്ഞെടുത്ത Role തെറ്റാണ്!");
+                }
+            } else {
+                await signOut(auth);
+                alert("യൂസർ വിവരങ്ങൾ ഡാറ്റാബേസിൽ (users collection) നൽകിയിട്ടില്ല!");
+            }
         } catch (error) {
             console.error("Login Error:", error.code);
-            if(error.code === 'auth/invalid-credential') {
-                alert("ഐഡിയോ പാസ്‌വേഡോ തെറ്റാണ്!");
-            } else {
-                alert("Login Failed: " + error.message);
-            }
+            alert("Login Failed: ഐഡിയോ പാസ്‌വേഡോ തെറ്റാണ്!");
         }
     },
 
@@ -72,7 +87,7 @@ const app = {
             app.showPage('dash-sec');
         } catch (e) { 
             console.error(e);
-            alert("സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല. റൂൾസ് പരിശോധിക്കുക."); 
+            alert("സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല. Security Rules പരിശോധിക്കുക."); 
         }
     },
 
@@ -116,23 +131,20 @@ const app = {
         }
     },
 
-    // മറ്റുള്ള ഫങ്ക്ഷനുകൾ (edit, update, archive) നിങ്ങളുടെ കോഡിലുള്ളത് പോലെ തന്നെ തുടരാം...
-    // ലളിതമാക്കാൻ ബാക്കി ഭാഗം മാറ്റുന്നില്ല.
-};
+    updateStatus: async (id, status) => { 
+        try {
+            await updateDoc(doc(db, "students", id), { status });
+            app.loadStudents();
+        } catch (e) { alert("മാറ്റം വരുത്താൻ അനുവാദമില്ല!"); }
+    },
 
-// ആപ്പിലെ മറ്റ് ഫങ്ക്ഷനുകൾ കൂടി ഇവിടെ ചേർക്കുക (edit, updateStatus, etc.)
-app.edit = async (id) => { /* നിങ്ങളുടെ പഴയ കോഡ് */ };
-app.updateStudent = async () => { /* നിങ്ങളുടെ പഴയ കോഡ് */ };
-app.archiveStudent = async (id) => { /* നിങ്ങളുടെ പഴയ കോഡ് */ };
-app.updateStatus = async (id, status) => { 
-    await updateDoc(doc(db, "students", id), { status });
-    app.loadStudents();
-};
-app.logout = () => { 
-    signOut(auth).then(() => {
-        localStorage.clear();
-        location.reload(); 
-    });
+    logout: () => { 
+        signOut(auth).then(() => {
+            localStorage.clear();
+            location.reload(); 
+        });
+    }
 };
 
 window.app = app;
+
