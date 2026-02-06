@@ -4,74 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SJM CHETTIPPADI PORTAL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="login-sec" class="page active">
-        <div class="login-box">
-            <h2>SJM CHETTIPPADI PORTAL</h2>
-            <select id="userRole">
-                <option value="madrasa">Madrasa (Institution)</option>
-                <option value="range">Range Office</option>
-            </select>
-            <input type="email" id="userID" placeholder="User ID / Email">
-            <input type="password" id="password" placeholder="Password">
-            <button class="btn" onclick="app.login()">Sign In</button>
+
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div class="sidebar-header">ഭാരവാഹികൾ</div>
+        <div id="sidebarCommitteeList" class="committee-info">
+            </div>
+        <hr>
+        <a href="#" onclick="app.showPage('dash-sec')"><i class="fa fa-home"></i> Dashboard</a>
+        <a href="#" onclick="app.showPage('dept-sec')"><i class="fa fa-folder"></i> വകുപ്പുകൾ</a>
+        <a href="#" onclick="app.showPage('teacher-sec')"><i class="fa fa-user-tie"></i> അധ്യാപകർ</a>
+        <div id="rangeOnlyLinks" style="display:none;">
+            <a href="#" onclick="app.showPage('manage-committee-sec'); app.loadCommitteeManage();"><i class="fa fa-users-cog"></i> ഭാരവാഹികളെ മാറ്റുക</a>
         </div>
     </div>
 
-    <div id="dash-sec" class="page">
-        <nav>
+    <div id="main">
+        <nav id="navbar" style="display:none;">
+            <button class="openbtn" onclick="openNav()">&#9776;</button>
             <span id="displayUser"></span>
             <button class="logout-btn" onclick="app.logout()">Logout</button>
         </nav>
-        <div class="grid">
-            <div class="card" onclick="app.showPage('admission-sec')">New Admission</div>
-            <div class="card" onclick="app.showPage('view-sec'); app.loadStudents();">Student Database</div>
-        </div>
-    </div>
 
-    <div id="admission-sec" class="page">
-        <div class="header-bar">
-            <button onclick="app.showPage('dash-sec')">Back</button>
+        <div id="login-sec" class="page active">
+            <div class="login-box">
+                <h2>SJM CHETTIPPADI</h2>
+                <select id="userRole">
+                    <option value="madrasa">Madrasa (Institution)</option>
+                    <option value="range">Range Office</option>
+                </select>
+                <input type="email" id="userID" placeholder="User ID">
+                <input type="password" id="password" placeholder="Password">
+                <button class="btn" onclick="app.login()">Sign In</button>
+            </div>
+        </div>
+
+        <div id="dash-sec" class="page">
+            <div class="grid">
+                <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> Admission</div>
+                <div class="card" onclick="app.showPage('view-sec'); app.loadStudents();"><i class="fa fa-database"></i> Database</div>
+                <div class="card" onclick="app.showPage('exam-stat-sec')"><i class="fa fa-chart-line"></i> Exam Stat</div>
+                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-bullhorn"></i> Circulars</div>
+            </div>
+        </div>
+
+        <div id="manage-committee-sec" class="page">
+            <h3>ഭാരവാഹികളെ നിയന്ത്രിക്കുക</h3>
+            <div class="admin-box">
+                <input type="text" id="commRole" placeholder="സ്ഥാനം (eg: President)">
+                <input type="text" id="commName" placeholder="പേര്">
+                <input type="text" id="commPhone" placeholder="ഫോൺ">
+                <button class="btn" onclick="app.addCommittee()">Add Member</button>
+            </div>
+            <div id="committeeTable"></div>
+        </div>
+
+        <div id="teacher-sec" class="page">
+            <h3>അധ്യാപക വിവരങ്ങൾ</h3>
+            <div class="admin-box">
+                <input type="text" id="tName" placeholder="പേര്">
+                <input type="text" id="tPlace" placeholder="നാട്">
+                <input type="text" id="tDate" placeholder="റൈഞ്ചിൽ ചേർന്ന തിയ്യതി">
+                <input type="number" id="tPhone" placeholder="മൊബൈൽ">
+                <button class="btn" onclick="app.saveTeacher()">Save</button>
+            </div>
+            <button class="btn print-btn" onclick="window.print()">Print List</button>
+            <div id="teacherList"></div>
+        </div>
+
+        <div id="dept-sec" class="page">
+            <h3>വകുപ്പുകൾ & അറിയിപ്പുകൾ</h3>
+            <div class="dept-grid">
+                <div class="dept-card" onclick="app.loadDocs('IT')">IT</div>
+                <div class="dept-card" onclick="app.loadDocs('Exam')">EXAM & WELFARE</div>
+                <div class="dept-card" onclick="app.loadDocs('Missionary')">MISSIONARY</div>
+                <div class="dept-card" onclick="app.loadDocs('Magazine')">MAGAZINE</div>
+            </div>
+            <div id="docList" class="content"></div>
+        </div>
+        
+        <div id="admission-sec" class="page">
+            <button class="btn" onclick="app.showPage('dash-sec')">Back</button>
             <h3>പുതിയ അഡ്മിഷൻ</h3>
-        </div>
-        <div class="content">
             <input type="text" id="stdName" placeholder="Student Name">
-            <select id="stdGender">
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-            </select>
-            <select id="stdClass">
-                <option value="">Class</option>
-                <option value="1">1</option><option value="2">2</option>
-                <option value="3">3</option><option value="4">4</option>
-            </select>
-            <input type="text" id="stdDiv" placeholder="Division (A, B, C...)">
-            <button class="btn save-btn" onclick="app.saveStudent()">Save Admission</button>
+            <select id="stdGender"><option value="Male">ആൺ</option><option value="Female">പെൺ</option></select>
+            <input type="number" id="stdClass" placeholder="Class">
+            <input type="text" id="stdDiv" placeholder="Division">
+            <button class="btn save-btn" onclick="app.saveStudent()">Save</button>
         </div>
-    </div>
 
-    <div id="view-sec" class="page">
-        <div class="header-bar">
-            <button onclick="app.showPage('dash-sec')">Back</button>
-            <h3>ലിസ്റ്റ്</h3>
-        </div>
-        <div class="content">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Class</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
+        <div id="view-sec" class="page">
+            <button class="btn" onclick="app.showPage('dash-sec')">Back</button>
+            <table id="stdTable">
+                <thead><tr><th>Name</th><th>Class</th><th>Status</th><th>Action</th></tr></thead>
                 <tbody id="studentList"></tbody>
             </table>
         </div>
     </div>
 
     <script type="module" src="script.js"></script>
+    <script>
+        function openNav() { document.getElementById("mySidebar").style.width = "250px"; }
+        function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
+    </script>
 </body>
 </html>
