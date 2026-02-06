@@ -62,8 +62,27 @@
             </div>
             <div id="committeeTable"></div>
         </div>
-
+        
+        <div id="dept-sec" class="page">
+            <h3>വകുപ്പുകൾ & അറിയിപ്പുകൾ</h3>
+            <div class="dept-grid">
+                <div class="dept-card" onclick="alert('IT Section Open')">IT</div>
+                <div class="dept-card" onclick="alert('Exam Section Open')">EXAM & WELFARE</div>
+                <div class="dept-card" onclick="alert('Missionary Section Open')">MISSIONARY</div>
+                <div class="dept-card" onclick="alert('Magazine Section Open')">MAGAZINE</div>
+            </div>
         </div>
+
+        <div id="teacher-sec" class="page">
+            <h3>അധ്യാപക വിവരങ്ങൾ</h3>
+            <div class="admin-box">
+                <input type="text" id="tName" placeholder="പേര്">
+                <input type="text" id="tPlace" placeholder="നാട്">
+                <input type="text" id="tPhone" placeholder="മൊബൈൽ">
+                <button class="btn" onclick="app.saveTeacher()">Save Teacher</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module" src="script.js"></script>
 </body>
