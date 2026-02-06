@@ -11,33 +11,28 @@
 
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" onclick="app.closeNav()">&times;</a>
-        <div class="sidebar-header">ഭാരവാഹികൾ</div>
-        <div id="sidebarCommitteeList" class="committee-info">
-            </div>
-        <hr>
+        <div class="sidebar-header">Quick Menu</div>
         <a href="#" onclick="app.showPage('dash-sec')"><i class="fa fa-home"></i> Dashboard</a>
-        <a href="#" onclick="app.showPage('dept-sec')"><i class="fa fa-folder"></i> വകുപ്പുകൾ</a>
-        <a href="#" onclick="app.showPage('teacher-sec')"><i class="fa fa-user-tie"></i> അധ്യാപകർ</a>
-        <div id="rangeOnlyLinks" style="display:none;">
-            <a href="#" onclick="app.showPage('manage-committee-sec'); app.loadCommitteeManage();"><i class="fa fa-users-cog"></i> ഭാരവാഹികളെ മാറ്റുക</a>
-        </div>
+        <a href="#" onclick="app.showPage('teacher-view-sec'); app.loadTeachers();"><i class="fa fa-user-tie"></i> Teachers Directory</a>
+        <a href="#" onclick="app.showPage('committee-view-sec'); app.loadCommittee();"><i class="fa fa-users"></i> Committee</a>
+        <a href="#" onclick="app.showPage('dept-sec')"><i class="fa fa-folder"></i> Departments</a>
     </div>
 
     <div id="main">
         <nav id="navbar" style="display:none;">
             <button class="openbtn" onclick="app.openNav()">&#9776;</button>
-            <span id="displayUser"></span>
+            <span id="displayUser">SJM CHETTIPPADI</span>
             <button class="logout-btn" onclick="app.logout()">Logout</button>
         </nav>
 
         <div id="login-sec" class="page active">
             <div class="login-box">
-                <h2>SJM CHETTIPPADI</h2>
+                <h2>SJM PORTAL</h2>
                 <select id="userRole">
                     <option value="madrasa">Madrasa (Institution)</option>
                     <option value="range">Range Office</option>
                 </select>
-                <input type="email" id="userID" placeholder="User ID">
+                <input type="email" id="userID" placeholder="User ID / Email">
                 <input type="password" id="password" placeholder="Password">
                 <button class="btn" onclick="app.login()">Sign In</button>
             </div>
@@ -45,45 +40,75 @@
 
         <div id="dash-sec" class="page">
             <div class="grid">
-                <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> Admission</div>
-                <div class="card" onclick="app.showPage('view-sec'); app.loadStudents();"><i class="fa fa-database"></i> Database</div>
-                <div class="card" onclick="app.showPage('exam-stat-sec')"><i class="fa fa-chart-line"></i> Exam Stat</div>
-                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-bullhorn"></i> Announcements</div>
+                <div id="madrasaOnlyCards" style="display:contents;">
+                    <div class="card" onclick="app.showPage('teacher-add-sec')"><i class="fa fa-plus-circle"></i> Add Teacher</div>
+                    <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> New Admission</div>
+                </div>
+                <div class="card" onclick="app.showPage('committee-view-sec'); app.loadCommittee();"><i class="fa fa-users"></i> Committee</div>
+                <div class="card" onclick="app.showPage('teacher-view-sec'); app.loadTeachers();"><i class="fa fa-user-tie"></i> Teachers List</div>
+                <div class="card" onclick="app.showPage('exam-stat-sec'); app.loadExamReport();"><i class="fa fa-chart-line"></i> Exam Stat</div>
+                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-folder-open"></i> Departments</div>
             </div>
         </div>
 
-        <div id="manage-committee-sec" class="page">
-            <h3>ഭാരവാഹികളെ മാറ്റുക</h3>
-            <div class="admin-box">
-                <input type="text" id="commRole" placeholder="സ്ഥാനം (eg: President)">
-                <input type="text" id="commName" placeholder="പേര്">
-                <input type="text" id="commPhone" placeholder="ഫോൺ">
-                <button class="btn" onclick="app.addCommittee()">Add Member</button>
-            </div>
-            <div id="committeeTable"></div>
-        </div>
-        
-        <div id="dept-sec" class="page">
-            <h3>വകുപ്പുകൾ & അറിയിപ്പുകൾ</h3>
-            <div class="dept-grid">
-                <div class="dept-card" onclick="alert('IT Section Open')">IT</div>
-                <div class="dept-card" onclick="alert('Exam Section Open')">EXAM & WELFARE</div>
-                <div class="dept-card" onclick="alert('Missionary Section Open')">MISSIONARY</div>
-                <div class="dept-card" onclick="alert('Magazine Section Open')">MAGAZINE</div>
-            </div>
-        </div>
-
-        <div id="teacher-sec" class="page">
-            <h3>അധ്യാപക വിവരങ്ങൾ</h3>
+        <div id="teacher-add-sec" class="page">
+            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
+            <h3>അധ്യാപക വിവരം ചേർക്കുക</h3>
             <div class="admin-box">
                 <input type="text" id="tName" placeholder="പേര്">
                 <input type="text" id="tPlace" placeholder="നാട്">
-                <input type="text" id="tPhone" placeholder="മൊബൈൽ">
-                <button class="btn" onclick="app.saveTeacher()">Save Teacher</button>
+                <input type="text" id="tMadrasa" placeholder="മദ്റസ">
+                <input type="text" id="tJoinDate" placeholder="റൈഞ്ചിൽ ചേർന്ന തിയ്യതി">
+                <input type="number" id="tPhone" placeholder="മൊബൈൽ">
+                <button class="btn" onclick="app.saveTeacher()">Save</button>
             </div>
         </div>
-    </div>
 
+        <div id="teacher-view-sec" class="page">
+            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
+            <div class="flex-row">
+                <h3>അധ്യാപക പട്ടിക</h3>
+                <button class="print-btn" onclick="window.print()">Print List</button>
+            </div>
+            <div id="teacherTableContainer"></div>
+        </div>
+
+        <div id="committee-view-sec" class="page">
+            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
+            <h3>റൈഞ്ച് ഭാരവാഹികൾ</h3>
+            <div id="committeeFolderList"></div>
+        </div>
+
+        <div id="dept-sec" class="page">
+            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
+            <h3>വകുപ്പുകൾ & അറിയിപ്പുകൾ</h3>
+            <div class="grid">
+                <div class="dept-card" onclick="app.openFolder('IT')">IT</div>
+                <div class="dept-card" onclick="app.openFolder('Exam')">EXAM & WELFARE</div>
+                <div class="dept-card" onclick="app.openFolder('Missionary')">MISSIONARY</div>
+                <div class="dept-card" onclick="app.openFolder('Magazine')">MAGAZINE</div>
+            </div>
+            <div id="folderContent" class="admin-box" style="display:none; margin-top:20px;">
+                <h4 id="folderTitle"></h4>
+                <div id="announcementsList"></div>
+            </div>
+        </div>
+
+        <div id="exam-stat-sec" class="page">
+            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
+            <h3>എക്സാം റിസൾട്ട് എൻട്രി</h3>
+            <div id="madrasaStatEntry" class="admin-box">
+                <select id="examClass"><option value="5">Class 5</option><option value="7">Class 7</option></select>
+                <div class="grid">
+                    <input type="number" id="bPassed" placeholder="Boys Passed">
+                    <input type="number" id="gPassed" placeholder="Girls Passed">
+                </div>
+                <button class="btn" onclick="app.saveExamStat()">Update</button>
+            </div>
+            <div id="examReportDisplay"></div>
+        </div>
+
+    </div>
     <script type="module" src="script.js"></script>
 </body>
 </html>
