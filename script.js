@@ -56,12 +56,18 @@ const app = {
             alert("Login Failed: ഐഡിയോ പാസ്‌വേഡോ തെറ്റാണ്!");
         }
     },
+    
 
     showPage: (id) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         const targetPage = document.getElementById(id);
         if(targetPage) targetPage.classList.add('active');
     },
+// script.js-ലെ ലോഗിൻ ഫങ്ക്ഷന്റെ അവസാനം ഇങ്ങനെ മാറ്റുക:
+} catch (error) {
+    console.error("Login Error Detailed:", error); // കൺസോളിൽ കൂടുതൽ വിവരങ്ങൾ കാണാൻ
+    alert("Login Failed: " + error.message); // എറർ മെസ്സേജ് പോപ്പ്-അപ്പായി കാണാൻ
+}
 
     saveStudent: async () => {
         const name = document.getElementById('stdName').value;
