@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, getDoc, doc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -14,6 +14,7 @@ const db = getFirestore(fbApp);
 const auth = getAuth(fbApp);
 
 const app = {
+    // ലോഗിൻ
     login: async () => {
         const id = document.getElementById('userID').value.trim();
         const pass = document.getElementById('password').value;
@@ -23,71 +24,95 @@ const app = {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, pass);
             const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
-            
             if (userDoc.exists() && userDoc.data().role === role) {
                 localStorage.setItem('role', role);
                 document.getElementById('navbar').style.display = 'flex';
-                document.getElementById('madrasaOnlyCards').style.display = (role === 'madrasa') ? 'contents' : 'none';
-                document.getElementById('madrasaStatEntry').style.display = (role === 'madrasa') ? 'block' : 'none';
                 app.showPage('dash-sec');
             } else { await signOut(auth); alert("Role Error!"); }
-        } catch (e) { alert("Login Failed: " + e.message); }
+        } catch (e) { alert("Login Error: " + e.message); }
     },
 
+    // അധ്യാപകർ - സേവ് / അപ്ഡേറ്റ്
     saveTeacher: async () => {
+        const id = document.getElementById('editTeacherId').value;
         const data = {
             name: document.getElementById('tName').value,
-            place: document.getElementById('tPlace').value,
             madrasa: document.getElementById('tMadrasa').value,
-            joinDate: document.getElementById('tJoinDate').value,
             phone: document.getElementById('tPhone').value,
             madrasa_id: auth.currentUser.uid
         };
-        await addDoc(collection(db, "teachers"), data);
-        alert("Saved!"); app.showPage('dash-sec');
+
+        if (id) {
+            await updateDoc(doc(db, "teachers", id), data);
+            alert("Updated!");
+        } else {
+            await addDoc(collection(db, "teachers"), data);
+            alert("Saved!");
+        }
+        app.showPage('dash-sec');
     },
 
+    // അധ്യാപക പട്ടിക ലോഡ് ചെയ്യുമ്പോൾ എഡിറ്റ് ബട്ടൺ നൽകുന്നു
     loadTeachers: async () => {
-        const role = localStorage.getItem('role');
-        let q = collection(db, "teachers");
-        if (role === 'madrasa') q = query(q, where("madrasa_id", "==", auth.currentUser.uid));
-        const snap = await getDocs(q);
-        let html = `<table><tr><th>പേര്</th><th>മദ്റസ</th><th>ഫോൺ</th></tr>`;
-        snap.forEach(d => { const t = d.data(); html += `<tr><td>${t.name}</td><td>${t.madrasa}</td><td>${t.phone}</td></tr>`; });
+        const snap = await getDocs(collection(db, "teachers"));
+        let html = `<table><tr><th>പേര്</th><th>മൊബൈൽ</th><th>Action</th></tr>`;
+        snap.forEach(d => {
+            const t = d.data();
+            html += `<tr>
+                <td>${t.name}</td>
+                <td>${t.phone}</td>
+                <td>
+                    <button onclick="app.editTeacher('${d.id}')">✏️</button>
+                    <button onclick="app.deleteItem('teachers', '${d.id}')">🗑️</button>
+                </td>
+            </tr>`;
+        });
         document.getElementById('teacherTableContainer').innerHTML = html + `</table>`;
+    },
+
+    editTeacher: async (id) => {
+        const d = await getDoc(doc(db, "teachers", id));
+        const t = d.data();
+        document.getElementById('editTeacherId').value = id;
+        document.getElementById('tName').value = t.name;
+        document.getElementById('tMadrasa').value = t.madrasa;
+        document.getElementById('tPhone').value = t.phone;
+        app.showPage('teacher-add-sec');
+    },
+
+    // ഭാരവാഹികൾ - സേവ് / അപ്ഡേറ്റ്
+    saveCommittee: async () => {
+        const data = {
+            role: document.getElementById('commRole').value,
+            name: document.getElementById('commName').value,
+            phone: document.getElementById('commPhone').value,
+            order: Date.now()
+        };
+        await addDoc(collection(db, "committee"), data);
+        alert("Committee Updated!");
+        app.showPage('dash-sec');
     },
 
     loadCommittee: async () => {
         const snap = await getDocs(query(collection(db, "committee"), orderBy("order")));
         let html = '<div class="grid">';
-        snap.forEach(d => { const m = d.data(); html += `<div class="card"><b>${m.role}</b><br>${m.name}<br>${m.phone}</div>`; });
+        snap.forEach(d => {
+            const m = d.data();
+            html += `<div class="card">
+                <b>${m.role}</b><br>${m.name}<br>${m.phone}<br>
+                <button onclick="app.deleteItem('committee', '${d.id}')" style="margin-top:5px; border:none; background:none;">🗑️ Delete</button>
+            </div>`;
+        });
         document.getElementById('committeeFolderList').innerHTML = html + '</div>';
     },
 
-    openFolder: async (dept) => {
-        document.getElementById('folderContent').style.display = 'block';
-        document.getElementById('folderTitle').innerText = dept + " Announcements";
-        const snap = await getDocs(query(collection(db, "announcements"), where("dept", "==", dept)));
-        let html = "";
-        snap.forEach(d => { html += `<div class="admin-box" style="margin-bottom:5px;">${d.data().msg}</div>`; });
-        document.getElementById('announcementsList').innerHTML = html || "No updates.";
-    },
-
-    saveExamStat: async () => {
-        const data = {
-            class: document.getElementById('examClass').value,
-            passed: parseInt(document.getElementById('bPassed').value) + parseInt(document.getElementById('gPassed').value),
-            madrasa_id: auth.currentUser.uid
-        };
-        await addDoc(collection(db, "exam_stats"), data);
-        alert("Updated!"); app.loadExamReport();
-    },
-
-    loadExamReport: async () => {
-        const snap = await getDocs(collection(db, "exam_stats"));
-        let html = "<table><tr><th>Madrasa ID</th><th>Class</th><th>Passed</th></tr>";
-        snap.forEach(d => { const e = d.data(); html += `<tr><td>${e.madrasa_id}</td><td>${e.class}</td><td>${e.passed}</td></tr>`; });
-        document.getElementById('examReportDisplay').innerHTML = html + "</table>";
+    // പൊതുവായ ഡിലീറ്റ് ഫങ്ക്ഷൻ
+    deleteItem: async (coll, id) => {
+        if (confirm("ഉറപ്പാണോ? ഇത് എന്നെന്നേക്കുമായി ഒഴിവാക്കപ്പെടും.")) {
+            await deleteDoc(doc(db, coll, id));
+            alert("ഒഴിവാക്കി!");
+            location.reload();
+        }
     },
 
     showPage: (id) => { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); app.closeNav(); },
@@ -95,4 +120,5 @@ const app = {
     closeNav: () => { document.getElementById("mySidebar").style.width = "0"; },
     logout: () => { signOut(auth).then(() => location.reload()); }
 };
+
 window.app = app;
