@@ -15,7 +15,6 @@ const db = getFirestore(fbApp);
 const auth = getAuth(fbApp);
 
 const app = {
-    // പരിഷ്കരിച്ച ലോഗിൻ ഫങ്ക്ഷൻ
     login: async () => {
         const id = document.getElementById('userID').value; 
         const pass = document.getElementById('password').value;
@@ -27,17 +26,14 @@ const app = {
         const email = cleanID.includes('@') ? cleanID : `${cleanID}@madrasa.com`; 
 
         try {
-            // 1. ഫയർബേസ് ഓതന്റിക്കേഷൻ
             const userCredential = await signInWithEmailAndPassword(auth, email, pass);
             const uid = userCredential.user.uid;
 
-            // 2. 'users' കളക്ഷനിൽ നിന്ന് ഈ യൂസറുടെ യഥാർത്ഥ റോൾ പരിശോധിക്കുന്നു
             const userDoc = await getDoc(doc(db, "users", uid));
             
             if (userDoc.exists()) {
                 const actualRole = userDoc.data().role;
 
-                // 3. യൂസർ തിരഞ്ഞെടുത്ത റോളും ഡാറ്റാബേസിലെ റോളും ഒന്നാണോ എന്ന് നോക്കുന്നു
                 if (actualRole === selectedRole) {
                     localStorage.setItem('uid', uid);
                     localStorage.setItem('role', actualRole);
@@ -69,13 +65,17 @@ const app = {
 
     saveStudent: async () => {
         const name = document.getElementById('stdName').value;
-        if(!name) return alert("പേര് നൽകുക");
+        // പുതിയDropdown-ൽ നിന്നുള്ള വാല്യൂ എടുക്കുന്നു
+        const stdClass = document.getElementById('stdClass').value;
+        const stdDiv = document.getElementById('stdDiv').value;
+
+        if(!name || !stdClass || !stdDiv) return alert("എല്ലാ വിവരങ്ങളും നൽകുക");
 
         const data = {
             name: name,
             gender: document.getElementById('stdGender').value,
-            class: document.getElementById('stdClass').value,
-            div: document.getElementById('stdDiv').value,
+            class: stdClass,
+            div: stdDiv,
             madrasa_id: localStorage.getItem('uid'),
             status: "draft",
             createdAt: new Date()
@@ -114,7 +114,7 @@ const app = {
                 list.innerHTML += `
                     <tr>
                         <td>${student.name}</td>
-                        <td>Std ${student.class}</td>
+                        <td>Std ${student.class} - ${student.div}</td>
                         <td class="status-${student.status}">${student.status}</td>
                         <td>
                             ${role === 'madrasa' && !isVerified ? `<button onclick="app.edit('${sDoc.id}')">✏️</button>` : ''}
@@ -129,6 +129,46 @@ const app = {
         } catch (e) {
             console.error("Load Error:", e);
         }
+    },
+
+    edit: async (id) => {
+        const snap = await getDoc(doc(db, "students", id));
+        if (snap.exists()) {
+            const data = snap.data();
+            document.getElementById('editId').value = id;
+            document.getElementById('editName').value = data.name;
+            document.getElementById('editClass').value = data.class;
+            document.getElementById('editDiv').value = data.div;
+            document.getElementById('editModal').style.display = 'block';
+        }
+    },
+
+    updateStudent: async () => {
+        const id = document.getElementById('editId').value;
+        try {
+            await updateDoc(doc(db, "students", id), {
+                name: document.getElementById('editName').value,
+                class: document.getElementById('editClass').value,
+                div: document.getElementById('editDiv').value
+            });
+            document.getElementById('editModal').style.display = 'none';
+            alert("Updated Successfully!");
+            app.loadStudents();
+        } catch (e) { alert("Error updating!"); }
+    },
+
+    archiveStudent: async (id) => {
+        if(!confirm("ഈ കുട്ടിയെ ആർക്കൈവിലേക്ക് മാറ്റട്ടെ?")) return;
+        const snap = await getDoc(doc(db, "students", id));
+        try {
+            await addDoc(collection(db, "archived_students"), { 
+                ...snap.data(), 
+                archivedAt: new Date()
+            });
+            await deleteDoc(doc(db, "students", id));
+            alert("Archived!");
+            app.loadStudents();
+        } catch (e) { alert("Error archiving!"); }
     },
 
     updateStatus: async (id, status) => { 
@@ -147,4 +187,3 @@ const app = {
 };
 
 window.app = app;
-
