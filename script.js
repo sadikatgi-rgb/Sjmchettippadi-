@@ -1,9 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, getDoc, updateDoc, doc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBxN_4Nqp0D635KRwHIQXmsLk_QRit8mBM", // നിങ്ങളുടെ ശരിയായ API Key നൽകുക
+    apiKey: "AIzaSyBxN_4Nqp0D635KRwHIQXmsLk_QRit8mBM", 
     authDomain: "sjmchettippadi.firebaseapp.com",
     projectId: "sjmchettippadi",
     appId: "1:832325821137:web:415b7e26cabd77ec8d5bf0"
@@ -27,36 +27,30 @@ const app = {
             
             if (userDoc.exists() && userDoc.data().role === selectedRole) {
                 localStorage.setItem('role', selectedRole);
+                
+                // ലോഗിൻ വിജയിച്ചാൽ Navbar കാണിക്കുന്നു
                 document.getElementById('navbar').style.display = 'flex';
                 if(selectedRole === 'range') document.getElementById('rangeOnlyLinks').style.display = 'block';
+                
                 app.showPage('dash-sec');
                 app.loadCommitteeSidebar();
             } else {
                 await signOut(auth);
-                alert("Role Mismatch!");
+                alert("തിരഞ്ഞെടുത്ത Role തെറ്റാണ്!");
             }
-        } catch (e) { alert("Error: " + e.message); }
+        } catch (e) { alert("Login Failed: " + e.message); }
     },
 
     showPage: (id) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        closeNav();
+        app.closeNav();
     },
+
+    openNav: () => { document.getElementById("mySidebar").style.width = "250px"; },
+    closeNav: () => { document.getElementById("mySidebar").style.width = "0"; },
 
     // ഭാരവാഹികൾ (Committee)
-    addCommittee: async () => {
-        const data = {
-            role: document.getElementById('commRole').value,
-            name: document.getElementById('commName').value,
-            phone: document.getElementById('commPhone').value,
-            order: Date.now()
-        };
-        await addDoc(collection(db, "committee"), data);
-        alert("Added!");
-        app.loadCommitteeManage();
-    },
-
     loadCommitteeSidebar: async () => {
         const snap = await getDocs(query(collection(db, "committee"), orderBy("order")));
         let html = "";
@@ -65,6 +59,18 @@ const app = {
             html += `<p><b>${m.role}:</b><br>${m.name}<br>${m.phone}</p>`;
         });
         document.getElementById('sidebarCommitteeList').innerHTML = html;
+    },
+
+    addCommittee: async () => {
+        const data = {
+            role: document.getElementById('commRole').value,
+            name: document.getElementById('commName').value,
+            phone: document.getElementById('commPhone').value,
+            order: Date.now()
+        };
+        await addDoc(collection(db, "committee"), data);
+        alert("അംഗത്തെ ചേർത്തു!");
+        app.loadCommitteeManage();
     },
 
     loadCommitteeManage: async () => {
@@ -78,28 +84,13 @@ const app = {
     },
 
     deleteMember: async (id) => {
-        if(confirm("Delete this member?")) {
+        if(confirm("ഈ അംഗത്തെ ഒഴിവാക്കട്ടെ?")) {
             await deleteDoc(doc(db, "committee", id));
             app.loadCommitteeManage();
         }
     },
 
-    // അധ്യാപകർ
-    saveTeacher: async () => {
-        const data = {
-            name: document.getElementById('tName').value,
-            place: document.getElementById('tPlace').value,
-            date: document.getElementById('tDate').value,
-            phone: document.getElementById('tPhone').value,
-            madrasa_id: auth.currentUser.uid
-        };
-        await addDoc(collection(db, "teachers"), data);
-        alert("Teacher Saved!");
-    },
-
-    // ... മറ്റ് ഫങ്ക്ഷനുകൾ (Student save, load etc.) ...
-    
-    logout: () => { signOut(auth).then(() => location.reload()); }
+    logout: () => { signOut(auth).then(() => { localStorage.clear(); location.reload(); }); }
 };
 
 window.app = app;
