@@ -1,21 +1,24 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, getDoc, doc, query, where, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBxN_4Nqp0D635KRwHIQXmsLk_QRit8mBM", 
     authDomain: "sjmchettippadi.firebaseapp.com",
     projectId: "sjmchettippadi",
+    storageBucket: "sjmchettippadi.appspot.com",
     appId: "1:832325821137:web:415b7e26cabd77ec8d5bf0"
 };
 
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 const auth = getAuth(fbApp);
+const storage = getStorage(fbApp);
 
 const app = {
     login: async () => {
-        const id = document.getElementById('userID').value.trim();
+        const id = document.getElementById('userID').value;
         const pass = document.getElementById('password').value;
         const role = document.getElementById('userRole').value;
         const email = id.includes('@') ? id : `${id}@madrasa.com`;
@@ -23,92 +26,85 @@ const app = {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, pass);
             const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
-            
             if (userDoc.exists() && userDoc.data().role === role) {
                 localStorage.setItem('role', role);
-                document.getElementById('navbar').style.display = 'flex';
-                document.getElementById('rangeAdminCard').style.display = (role === 'range') ? 'block' : 'none';
-                app.showPage('dash-sec');
+                app.updateProfileUI(userDoc.data());
+                app.loadDashData();
             } else { await signOut(auth); alert("അനുമതിയില്ല!"); }
         } catch (e) { alert("Login Error: " + e.message); }
     },
 
-    // അഡ്മിഷൻ (Admission)
-    saveStudent: async () => {
-        const data = {
-            name: document.getElementById('sName').value,
-            class: document.getElementById('sClass').value,
-            parent: document.getElementById('sParent').value,
-            madrasa_id: auth.currentUser.uid,
-            timestamp: new Date()
-        };
-        await addDoc(collection(db, "students"), data);
-        alert("അഡ്മിഷൻ വിവരങ്ങൾ ചേർത്തു!"); app.showPage('dash-sec');
+    updateProfileUI: (data) => {
+        document.getElementById('user-profile-header').style.display = 'block';
+        document.getElementById('navbar').style.display = 'flex';
+        document.getElementById('disp-name').innerText = data.madrasa_name || "CHETTIPPADI RANGE";
+        document.getElementById('disp-place').innerText = data.place || "MALAPPURAM";
+        document.getElementById('disp-role').innerText = data.role.toUpperCase();
+        if(data.role === 'range') document.getElementById('range-dept-admin').style.display = 'block';
+        app.showPage('dash-sec');
     },
 
-    // ടീച്ചേഴ്സ് ലോഡ് ചെയ്യുമ്പോൾ (Range/Madrasa Filter)
-    loadTeachers: async () => {
+    loadDashData: async () => {
         const role = localStorage.getItem('role');
-        let q = collection(db, "teachers");
-        if (role === 'madrasa') q = query(q, where("madrasa_id", "==", auth.currentUser.uid));
-        
-        const snap = await getDocs(q);
-        let html = `<table><tr><th>പേര്</th><th>മദ്റസ</th><th>Action</th></tr>`;
-        snap.forEach(d => {
-            html += `<tr><td>${d.data().name}</td><td>${d.data().madrasa}</td>
-            <td><button class="btn" style="padding:5px; background:red;" onclick="app.deleteItem('teachers', '${d.id}')">🗑️</button></td></tr>`;
-        });
-        document.getElementById('teacherTableContainer').innerHTML = html || "ഡാറ്റ ലഭ്യമല്ല.";
+        const uid = auth.currentUser.uid;
+
+        // Teachers Side Scroll
+        let tQ = collection(db, "teachers");
+        if(role === 'madrasa') tQ = query(tQ, where("madrasa_id", "==", uid));
+        const tSnap = await getDocs(tQ);
+        let tHtml = "";
+        tSnap.forEach(d => { tHtml += `<div class="scroll-item"><b>${d.data().name}</b><br><small>${d.data().phone}</small></div>`; });
+        document.getElementById('teacher-h-scroll').innerHTML = tHtml || "No Data";
+
+        // Students Side Scroll
+        let sQ = collection(db, "students");
+        if(role === 'madrasa') sQ = query(sQ, where("madrasa_id", "==", uid));
+        const sSnap = await getDocs(sQ);
+        let sHtml = "";
+        sSnap.forEach(d => { sHtml += `<div class="scroll-item"><b>${d.data().name}</b><br><small>Class: ${d.data().class}</small></div>`; });
+        document.getElementById('student-h-scroll').innerHTML = sHtml || "No Data";
     },
 
-    // ഭാരവാഹികൾ
-    saveCommittee: async () => {
-        if (localStorage.getItem('role') !== 'range') return alert("റൈഞ്ചിന് മാത്രമേ അനുമതിയുള്ളൂ!");
-        const data = {
-            role: document.getElementById('commRole').value,
-            name: document.getElementById('commName').value,
-            phone: document.getElementById('commPhone').value,
-            order: Date.now()
-        };
-        await addDoc(collection(db, "committee"), data);
-        alert("ഭാരവാഹി വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു!"); app.showPage('dash-sec');
-    },
+    saveDeptData: async () => {
+        const file = document.getElementById('pdfFile').files[0];
+        const msg = document.getElementById('deptMsg').value;
+        const dept = document.getElementById('deptSelect').value;
+        const btn = document.getElementById('saveDeptBtn');
+        btn.innerText = "Uploading...";
 
-    loadCommittee: async () => {
-        const snap = await getDocs(query(collection(db, "committee"), orderBy("order")));
-        let html = '<div class="grid">';
-        snap.forEach(d => {
-            const m = d.data();
-            html += `<div class="card" style="text-align:left;"><b>${m.role}</b><br>${m.name}<br>${m.phone}</div>`;
-        });
-        document.getElementById('committeeFolderList').innerHTML = html + "</div>";
-    },
-
-    // Side Menu Controls
-    openNav: () => { document.getElementById("mySidebar").style.width = "260px"; },
-    closeNav: () => { document.getElementById("mySidebar").style.width = "0"; },
-    
-    showPage: (id) => {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        app.closeNav();
-    },
-
-    openFolder: (dept) => {
-        document.getElementById('folderContent').style.display = 'block';
-        document.getElementById('folderTitle').innerText = dept + " - അറിയിപ്പുകൾ";
-        document.getElementById('announcementsList').innerText = "ഈ വകുപ്പിൽ പുതിയ അറിയിപ്പുകൾ ഒന്നുമില്ല.";
-    },
-
-    deleteItem: async (coll, id) => {
-        if (confirm("ഇത് ഒഴിവാക്കണോ?")) {
-            await deleteDoc(doc(db, coll, id));
-            alert("ഒഴിവാക്കി!");
-            app.loadTeachers();
+        let url = "";
+        if(file) {
+            const sRef = ref(storage, `docs/${Date.now()}_${file.name}`);
+            await uploadBytes(sRef, file);
+            url = await getDownloadURL(sRef);
         }
+
+        await addDoc(collection(db, "announcements"), {
+            dept, msg, pdfUrl: url, timestamp: new Date(), date: new Date().toLocaleDateString('en-GB')
+        });
+        alert("Published!"); location.reload();
     },
 
-    logout: () => { signOut(auth).then(() => { localStorage.clear(); location.reload(); }); }
-};
+    loadDept: async (name) => {
+        const q = query(collection(db, "announcements"), where("dept", "==", name), orderBy("timestamp", "desc"));
+        const snap = await getDocs(q);
+        let html = "";
+        snap.forEach(d => {
+            const data = d.data();
+            html += `<div class="card" style="text-align:left; margin-bottom:10px;">
+                <small>${data.date}</small><p>${data.msg}</p>
+                ${data.pdfUrl ? `<a href="${data.pdfUrl}" target="_blank" style="color:red; font-weight:bold;">📥 Download PDF</a>` : ""}
+            </div>`;
+        });
+        document.getElementById('dept-list-view').innerHTML = html || "No announcements.";
+    },
 
+    showPage: (id) => { 
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active'); app.closeNav(); 
+    },
+    openNav: () => document.getElementById("mySidebar").style.width = "250px",
+    closeNav: () => document.getElementById("mySidebar").style.width = "0",
+    logout: () => { signOut(auth).then(() => location.reload()); }
+};
 window.app = app;
