@@ -4,11 +4,11 @@ import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from
 
 // 🔴 നിങ്ങളുടെ ശരിയായ Firebase Config ഇവിടെ പേസ്റ്റ് ചെയ്യുക
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyBxN_4Nqp0D635KRwHIQXmsLk_QRit8mBM",
+    authDomain: "sjmchettippadi.firebaseapp.com",
+    projectId: "sjmchettippadi",
+    storageBucket: "sjmchettippadi.firebasestorage.app",
+    appId: "1:832325821137:web:415b7e26cabd77ec8d5bf0"
 };
 
 const fbApp = initializeApp(firebaseConfig);
