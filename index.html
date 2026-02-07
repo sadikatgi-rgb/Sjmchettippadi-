@@ -15,8 +15,6 @@
         <hr>
         <a href="#" onclick="app.showPage('dash-sec')"><i class="fa fa-home"></i> Dashboard</a>
         <a href="#" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> New Admission</a>
-        <a href="#" onclick="app.showPage('teacher-view-sec'); app.loadTeachers();"><i class="fa fa-user-tie"></i> Teachers Directory</a>
-        <a href="#" onclick="app.showPage('committee-view-sec'); app.loadCommittee();"><i class="fa fa-users"></i> Committee Folder</a>
         <a href="#" onclick="app.showPage('dept-sec')"><i class="fa fa-folder-open"></i> Departments</a>
         <a href="#" onclick="app.logout()"><i class="fa fa-sign-out-alt"></i> Logout</a>
     </div>
@@ -28,9 +26,21 @@
             <button class="logout-btn" onclick="app.logout()">Logout</button>
         </nav>
 
+        <div id="user-profile-header" style="display:none;">
+            <div class="profile-card">
+                <div class="profile-main">
+                    <div class="avatar"><i class="fa fa-mosque"></i></div>
+                    <div class="info">
+                        <h2 id="disp-name">Loading...</h2>
+                        <p id="disp-place">Location...</p>
+                        <span class="badge" id="disp-role">User</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="login-sec" class="page active">
             <div class="login-box">
-                <i class="fa fa-mosque" style="font-size: 40px; color: #0056b3; margin-bottom: 10px;"></i>
                 <h2>SJM PORTAL</h2>
                 <select id="userRole">
                     <option value="madrasa">Madrasa (Institution)</option>
@@ -43,14 +53,19 @@
         </div>
 
         <div id="dash-sec" class="page">
+            <div class="section-group">
+                <h4>അധ്യാപകർ (Side Scroll)</h4>
+                <div id="teacher-h-scroll" class="h-scroll"></div>
+            </div>
+
+            <div class="section-group">
+                <h4>കുട്ടികൾ (Side Scroll)</h4>
+                <div id="student-h-scroll" class="h-scroll"></div>
+            </div>
+
             <div class="grid">
                 <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> Admission</div>
                 <div class="card" onclick="app.showPage('teacher-add-sec')"><i class="fa fa-plus-circle"></i> Add Teacher</div>
-                <div id="rangeAdminCard" class="card" style="display:none;" onclick="app.showPage('committee-add-sec')">
-                    <i class="fa fa-user-shield"></i> Update Committee
-                </div>
-                <div class="card" onclick="app.showPage('committee-view-sec'); app.loadCommittee();"><i class="fa fa-users"></i> Committee</div>
-                <div class="card" onclick="app.showPage('teacher-view-sec'); app.loadTeachers();"><i class="fa fa-user-tie"></i> Staff List</div>
                 <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-folder-open"></i> Departments</div>
             </div>
         </div>
@@ -66,51 +81,31 @@
             </div>
         </div>
 
-        <div id="teacher-add-sec" class="page">
-            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
-            <h3>അധ്യാപക വിവരം</h3>
-            <div class="admin-box">
-                <input type="text" id="tName" placeholder="പേര്">
-                <input type="text" id="tMadrasa" placeholder="മദ്റസ">
-                <input type="number" id="tPhone" placeholder="മൊബൈൽ">
-                <button class="btn" onclick="app.saveTeacher()">Save Staff</button>
-            </div>
-        </div>
-
         <div id="dept-sec" class="page">
             <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
-            <h3>റൈഞ്ച് വകുപ്പുകൾ</h3>
+            <h3>വകുപ്പുകൾ & അറിയിപ്പുകൾ</h3>
+            
+            <div id="range-dept-admin" class="admin-box" style="display:none; border: 2px solid #0056b3;">
+                <h4>Add PDF / Update (Range Only)</h4>
+                <select id="deptSelect">
+                    <option value="IT">IT</option>
+                    <option value="Exam">EXAM</option>
+                    <option value="Missionary">MISSIONARY</option>
+                    <option value="Magazine">MAGAZINE</option>
+                </select>
+                <textarea id="deptMsg" placeholder="അറിയിപ്പ് ടൈപ്പ് ചെയ്യുക..."></textarea>
+                <input type="file" id="pdfFile" accept="application/pdf">
+                <button class="btn" id="saveDeptBtn" onclick="app.saveDeptData()">Publish</button>
+            </div>
+
             <div class="grid">
-                <div class="dept-card" onclick="app.openFolder('IT')">IT</div>
-                <div class="dept-card" onclick="app.openFolder('Exam')">EXAM & WELFARE</div>
-                <div class="dept-card" onclick="app.openFolder('Missionary')">MISSIONARY</div>
-                <div class="dept-card" onclick="app.openFolder('Magazine')">MAGAZINE</div>
+                <div class="dept-card" onclick="app.loadDept('IT')">IT</div>
+                <div class="dept-card" onclick="app.loadDept('Exam')">EXAM</div>
+                <div class="dept-card" onclick="app.loadDept('Missionary')">MISSIONARY</div>
+                <div class="dept-card" onclick="app.loadDept('Magazine')">MAGAZINE</div>
             </div>
-            <div id="folderContent" class="admin-box" style="display:none; margin-top:20px;">
-                <h4 id="folderTitle"></h4>
-                <div id="announcementsList"></div>
-            </div>
-        </div>
 
-        <div id="committee-add-sec" class="page">
-            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
-            <h3>Update Committee</h3>
-            <div class="admin-box">
-                <input type="text" id="commRole" placeholder="സ്ഥാനം">
-                <input type="text" id="commName" placeholder="പേര്">
-                <input type="number" id="commPhone" placeholder="ഫോൺ">
-                <button class="btn" onclick="app.saveCommittee()">Update</button>
-            </div>
-        </div>
-
-        <div id="teacher-view-sec" class="page">
-            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
-            <div id="teacherTableContainer"></div>
-        </div>
-
-        <div id="committee-view-sec" class="page">
-            <button class="btn back-btn" onclick="app.showPage('dash-sec')">Back</button>
-            <div id="committeeFolderList"></div>
+            <div id="dept-list-view" style="margin-top:20px;"></div>
         </div>
 
     </div>
