@@ -3,66 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SJM PORTAL</title>
+    <title>SJM CHETTIPPADI PORTAL</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <nav id="navbar" style="display:none;">
-        <span id="displayUser">SJM PORTAL</span>
-        <button class="logout-btn" onclick="app.logout()">Logout</button>
-    </nav>
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="app.closeNav()">&times;</a>
+        <div class="sidebar-header">Main Menu</div>
+        <hr>
+        <a href="#" onclick="app.goHome()"><i class="fa fa-home"></i> Dashboard</a>
+        <a href="#" onclick="app.showPage('dept-sec')"><i class="fa fa-folder-open"></i> Departments</a>
+        <a href="#" onclick="app.logout()"><i class="fa fa-sign-out-alt"></i> Logout</a>
+    </div>
 
-    <div id="profile-card-sec" style="display:none;" class="profile-card">
-        <div class="profile-main">
-            <div class="avatar"><i class="fa fa-university"></i></div>
-            <div class="info">
-                <h2 id="disp-name">Loading...</h2>
-                <p id="disp-place">Location...</p>
-                <span class="badge" id="disp-role">User</span>
+    <div id="main">
+        <nav id="navbar" style="display:none;">
+            <button class="openbtn" onclick="app.openNav()">&#9776; Menu</button>
+            <span id="displayUser">SJM CHETTIPPADI</span>
+            <button class="logout-btn" onclick="app.logout()">Logout</button>
+        </nav>
+
+        <div id="profile-card-sec" style="display:none;" class="profile-card">
+            <div class="profile-main">
+                <div class="avatar"><i class="fa fa-mosque"></i></div>
+                <div class="info">
+                    <h2 id="disp-name">Loading...</h2>
+                    <p id="disp-place">Location...</p>
+                    <span class="badge" id="disp-role">User</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="login-sec" class="page active">
-        <div class="login-box">
-            <h2>LOGIN</h2>
-            <select id="userRole">
-                <option value="madrasa">Madrasa Login</option>
-                <option value="range">Range Login</option>
-            </select>
-            <input type="email" id="userID" placeholder="User ID / Email">
-            <input type="password" id="password" placeholder="Password">
-            <button class="btn" onclick="app.login()">Sign In</button>
+        <div id="login-sec" class="page active">
+            <div class="login-box">
+                <h2>SJM PORTAL</h2>
+                <select id="userRole">
+                    <option value="madrasa">Madrasa Login</option>
+                    <option value="range">Range Login</option>
+                </select>
+                <input type="email" id="userID" placeholder="Email / ID">
+                <input type="password" id="password" placeholder="Password">
+                <button class="btn" onclick="app.login()">Sign In</button>
+            </div>
+        </div>
+
+        <div id="madrasa-page" class="page">
+            <div class="section-group">
+                <h4>അധ്യാപകർ (Side Scroll)</h4>
+                <div id="teacher-h-scroll" class="h-scroll"></div>
+            </div>
+            <div class="section-group">
+                <h4>കുട്ടികൾ (Side Scroll)</h4>
+                <div id="student-h-scroll" class="h-scroll"></div>
+            </div>
+            <div class="grid">
+                <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> Admission</div>
+                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-folder-open"></i> Departments</div>
+            </div>
+        </div>
+
+        <div id="range-page" class="page">
+            <h3>റൈഞ്ച് അഡ്മിൻ പാനൽ</h3>
+            <div class="grid">
+                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-upload"></i> Upload PDF</div>
+                <div class="card" onclick="app.loadAllData()"><i class="fa fa-database"></i> Database</div>
+            </div>
+        </div>
+
+        <div id="admission-sec" class="page">
+            <button class="btn back-btn" onclick="app.goHome()"><i class="fa fa-arrow-left"></i> Back</button>
+            <h3>New Admission</h3>
+            <div class="admin-box">
+                <input type="text" id="sName" placeholder="കുട്ടിയുടെ പേര്">
+                <input type="number" id="sClass" placeholder="ക്ലാസ്">
+                <input type="text" id="sParent" placeholder="രക്ഷിതാവ്">
+                <button class="btn" onclick="app.saveStudent()">Save Admission</button>
+            </div>
+        </div>
+
+        <div id="dept-sec" class="page">
+            <button class="btn back-btn" onclick="app.goHome()">Back</button>
+            <h3>വകുപ്പുകൾ & അറിയിപ്പുകൾ</h3>
+            
+            <div id="range-dept-admin" class="admin-box" style="display:none; border: 2px solid #0056b3;">
+                <h4>Add PDF / Message</h4>
+                <select id="deptSelect">
+                    <option value="IT">IT</option>
+                    <option value="Exam">EXAM</option>
+                    <option value="Missionary">MISSIONARY</option>
+                    <option value="Magazine">MAGAZINE</option>
+                </select>
+                <textarea id="deptMsg" placeholder="അറിയിപ്പ് ടൈപ്പ് ചെയ്യുക..."></textarea>
+                <input type="file" id="pdfFile" accept="application/pdf">
+                <button class="btn" id="saveDeptBtn" onclick="app.saveDeptData()">Publish</button>
+            </div>
+
+            <div class="grid">
+                <div class="dept-card" onclick="app.loadDept('IT')">IT</div>
+                <div class="dept-card" onclick="app.loadDept('Exam')">EXAM</div>
+                <div class="dept-card" onclick="app.loadDept('Missionary')">MISSIONARY</div>
+                <div class="dept-card" onclick="app.loadDept('Magazine')">MAGAZINE</div>
+            </div>
+            <div id="dept-list-view" style="margin-top:20px;"></div>
         </div>
     </div>
-
-    <div id="madrasa-page" class="page">
-        <h3>മദ്റസ ഡാഷ്ബോർഡ്</h3>
-        <div class="section-group">
-            <h4>അധ്യാപകർ (Side Scroll)</h4>
-            <div id="teacher-scroll" class="h-scroll"></div>
-        </div>
-        <div class="grid">
-            <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> Admission</div>
-            <div class="card" onclick="app.showPage('dept-view')"><i class="fa fa-folder"></i> Documents</div>
-        </div>
-    </div>
-
-    <div id="range-page" class="page">
-        <h3>റൈഞ്ച് ഓഫീസ് പാനൽ</h3>
-        <div class="grid">
-            <div class="card" onclick="app.showPage('range-admin-sec')"><i class="fa fa-upload"></i> Upload PDF</div>
-            <div class="card" onclick="app.showPage('all-madrasa-view')"><i class="fa fa-list"></i> All Madrasas</div>
-            <div class="card" onclick="app.showPage('committee-edit')"><i class="fa fa-users-cog"></i> Committee</div>
-        </div>
-    </div>
-
-    <div id="admission-sec" class="page">
-        <button onclick="app.goHome()">Back</button>
-        </div>
-
     <script type="module" src="script.js"></script>
 </body>
 </html>
