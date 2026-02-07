@@ -47,3 +47,57 @@ input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px
 .sidebar { height: 100%; width: 0; position: fixed; z-index: 1001; top: 0; left: 0; background-color: #111; overflow-x: hidden; transition: 0.5s; padding-top: 60px; }
 .sidebar a { padding: 10px 32px; text-decoration: none; font-size: 18px; color: #818181; display: block; }
 nav { background: var(--primary); color: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+
+/* ലളിതമായ ആധുനിക ഡിസൈൻ */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 350px;
+}
+
+h2 {
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box; /* പാഡിംഗ് ബോക്സിനുള്ളിൽ നിൽക്കാൻ */
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+#result {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #007bff;
+}
