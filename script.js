@@ -122,3 +122,25 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 window.app = app;
+document.addEventListener('DOMContentLoaded', () => {
+    const actionButton = document.getElementById('submitBtn');
+    const resultDiv = document.getElementById('result');
+
+    actionButton.addEventListener('click', () => {
+        const userInput = document.getElementById('userInput').value;
+
+        // ഇൻപുട്ട് ശൂന്യമാണോ എന്ന് പരിശോധിക്കുന്നു
+        if (userInput.trim() === "") {
+            resultDiv.innerHTML = "ദയവായി എന്തെങ്കിലും ടൈപ്പ് ചെയ്യൂ!";
+            resultDiv.style.color = "red";
+        } else {
+            // ഫലം സ്ക്രീനിൽ കാണിക്കുന്നു
+            resultDiv.innerHTML = `നിങ്ങൾ നൽകിയത്: <strong>${userInput}</strong>`;
+            resultDiv.style.color = "#007bff";
+            
+            // ഇൻപുട്ട് ബോക്സ് ക്ലിയർ ചെയ്യാൻ
+            document.getElementById('userInput').value = "";
+        }
+    });
+});
+I
