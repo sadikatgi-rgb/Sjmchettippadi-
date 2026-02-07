@@ -38,6 +38,7 @@
 
         <div id="login-sec" class="page active">
             <div class="login-box">
+                <i class="fa fa-user-circle" style="font-size: 50px; color: #0056b3; margin-bottom: 15px;"></i>
                 <h2>SJM PORTAL</h2>
                 <select id="userRole">
                     <option value="madrasa">Madrasa Login</option>
@@ -51,31 +52,33 @@
 
         <div id="madrasa-page" class="page">
             <div class="section-group">
-                <h4>അധ്യാപകർ (Side Scroll)</h4>
+                <h4>അധ്യാപകർ (Side Scroll) <i class="fa fa-arrow-right"></i></h4>
                 <div id="teacher-h-scroll" class="h-scroll"></div>
             </div>
             <div class="section-group">
-                <h4>കുട്ടികൾ (Side Scroll)</h4>
+                <h4>കുട്ടികൾ (Side Scroll) <i class="fa fa-arrow-right"></i></h4>
                 <div id="student-h-scroll" class="h-scroll"></div>
             </div>
             <div class="grid">
-                <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i> Admission</div>
-                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-folder-open"></i> Departments</div>
+                <div class="card" onclick="app.showPage('admission-sec')"><i class="fa fa-user-plus"></i><br>Admission</div>
+                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-folder-open"></i><br>Departments</div>
+                <div class="card" onclick="app.loadMadrasaData()"><i class="fa fa-sync"></i><br>Refresh</div>
             </div>
         </div>
 
         <div id="range-page" class="page">
-            <h3>റൈഞ്ച് അഡ്മിൻ പാനൽ</h3>
+            <h3 style="text-align: center;">റൈഞ്ച് അഡ്മിൻ പാനൽ</h3>
             <div class="grid">
-                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-upload"></i> Upload PDF</div>
-                <div class="card" onclick="app.loadAllData()"><i class="fa fa-database"></i> Database</div>
+                <div class="card" onclick="app.showPage('dept-sec')"><i class="fa fa-bullhorn"></i><br>Add News/PDF</div>
+                <div class="card" onclick="alert('Coming Soon')"><i class="fa fa-users"></i><br>All Madrasas</div>
+                <div class="card" onclick="app.logout()"><i class="fa fa-sign-out-alt"></i><br>Logout</div>
             </div>
         </div>
 
         <div id="admission-sec" class="page">
             <button class="btn back-btn" onclick="app.goHome()"><i class="fa fa-arrow-left"></i> Back</button>
-            <h3>New Admission</h3>
             <div class="admin-box">
+                <h3>New Admission</h3>
                 <input type="text" id="sName" placeholder="കുട്ടിയുടെ പേര്">
                 <input type="number" id="sClass" placeholder="ക്ലാസ്">
                 <input type="text" id="sParent" placeholder="രക്ഷിതാവ്">
@@ -84,20 +87,19 @@
         </div>
 
         <div id="dept-sec" class="page">
-            <button class="btn back-btn" onclick="app.goHome()">Back</button>
-            <h3>വകുപ്പുകൾ & അറിയിപ്പുകൾ</h3>
+            <button class="btn back-btn" onclick="app.goHome()"><i class="fa fa-arrow-left"></i> Back</button>
             
-            <div id="range-dept-admin" class="admin-box" style="display:none; border: 2px solid #0056b3;">
-                <h4>Add PDF / Message</h4>
+            <div id="range-dept-admin" class="admin-box" style="display:none; border: 2px solid #0056b3; margin-bottom: 20px;">
+                <h4>പുതിയ അറിയിപ്പ് / ഡ്രൈവ് ലിങ്ക്</h4>
                 <select id="deptSelect">
                     <option value="IT">IT</option>
                     <option value="Exam">EXAM</option>
                     <option value="Missionary">MISSIONARY</option>
                     <option value="Magazine">MAGAZINE</option>
                 </select>
-                <textarea id="deptMsg" placeholder="അറിയിപ്പ് ടൈപ്പ് ചെയ്യുക..."></textarea>
-                <input type="file" id="pdfFile" accept="application/pdf">
-                <button class="btn" id="saveDeptBtn" onclick="app.saveDeptData()">Publish</button>
+                <textarea id="deptMsg" placeholder="വിവരങ്ങൾ ഇവിടെ ടൈപ്പ് ചെയ്യുക..."></textarea>
+                <input type="url" id="driveLink" placeholder="Google Drive Link ഇവിടെ നൽകുക">
+                <button class="btn" id="saveDeptBtn" onclick="app.saveDeptData()">Publish Now</button>
             </div>
 
             <div class="grid">
@@ -108,6 +110,7 @@
             </div>
             <div id="dept-list-view" style="margin-top:20px;"></div>
         </div>
+
     </div>
     <script type="module" src="script.js"></script>
 </body>
